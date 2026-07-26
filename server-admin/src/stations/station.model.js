@@ -22,7 +22,7 @@ const stationSchema = new mongoose.Schema(
             type: String,
             required: true,
             enum: ['CENTRALES', 'CARRIL LATERAL', 'TRASBORDO', 'TERMINALES'],
-            default: 'TRONCAL'
+            default: 'CENTRALES'
         },
         status: {
             type: String,
@@ -35,7 +35,6 @@ const stationSchema = new mongoose.Schema(
                 type: String,
                 enum: ['Point'], 
                 required: true,
-                unique: true,
                 default: 'Point'
             },
             coordinates: {

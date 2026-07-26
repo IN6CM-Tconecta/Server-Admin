@@ -15,9 +15,11 @@ import {
     validateGetStationById,
     validateStationStatusChange
 } from "../../middlewares/stations-validators.js";
-import { validateJWT } from "../../middlewares/auth-validators.js";
+import { validateJWT, requireAdminRole } from "../../middlewares/auth-validators.js";
 
 const router = Router();
+
+router.use(validateJWT);
 
 /**
  * @swagger
@@ -284,6 +286,7 @@ router.get('/:id', [
 
 // Crear nueva estación
 router.post('/', [
+    requireAdminRole,
     validateCreateStation
 ], createStation);
 
@@ -291,12 +294,13 @@ router.post('/', [
 
 // Actualizar estación existente
 router.put('/:id', [
+    requireAdminRole,
     validateUpdateStation
 ], updateStation);
 
 // Cambiar estado de la estación (activar/desactivar)
 router.put('/:id/status', [
-    validateJWT,
+    requireAdminRole,
     validateStationStatusChange
 ], changeStationStatus);
 
