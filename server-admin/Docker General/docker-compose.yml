@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # ==========================================
   # BASES DE DATOS
@@ -64,7 +62,7 @@ services:
       - "3001:3001"
     environment:
       - PORT=3001
-      - URI_MONGODB=mongodb://mongo-db:27017/TransmetroAdminDb
+      - MONGODB_URI=mongodb://mongo-db:27017/TransmetroAdminDb
       - JWT_SECRET=A_SUPER_SECRET_KEY_FOR_TRANSMETRO_CONECTA_12345
     depends_on:
       - mongo-db
@@ -73,14 +71,14 @@ services:
 
   server-client:
     build:
-      context: ./Transmetro-server-client/server-client
+      context: ./Server-Client/server-client
       dockerfile: Dockerfile
     container_name: transmetro_server_client
     ports:
       - "3002:3002"
     environment:
       - PORT=3002
-      - URI_MONGODB=mongodb://mongo-db:27017/TransmetroUserDb
+      - MONGODB_URI=mongodb://mongo-db:27017/TransmetroUserDb
       - JWT_SECRET=A_SUPER_SECRET_KEY_FOR_TRANSMETRO_CONECTA_12345
       - INTERNAL_SECRET=SuperSecretS2S_Transmetro2026
     depends_on:

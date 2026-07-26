@@ -36,7 +36,8 @@ export const dbConnection = async () => {
     //                   CONEXION
     // ----------------------------------------------
  
-    await mongoose.connect(process.env.MONGODB_URI, {
+    const dbUri = process.env.MONGODB_URI || process.env.URI_MONGODB || "mongodb://localhost:27017/TransmetroAdminDb";
+    await mongoose.connect(dbUri, {
       serverSelectionTimeoutMS: 5000,
       maxPoolSize: 10,
     });

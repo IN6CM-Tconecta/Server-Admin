@@ -16,10 +16,6 @@ const options = {
             {
                 url: 'http://localhost:3001/TCONECTA/v1',
                 description: 'Development Server'
-            },
-            {
-                url: 'https://api.tconecta.com/TCONECTA/v1',
-                description: 'Production Server'
             }
         ],
         components: {
@@ -35,165 +31,81 @@ const options = {
                 Road: {
                     type: 'object',
                     properties: {
-                        _id: {
-                            type: 'string',
-                            description: 'Unique identifier for the road'
-                        },
-                        name: {
-                            type: 'string',
-                            description: 'Name of the road'
-                        },
-                        code: {
-                            type: 'string',
-                            description: 'Code identifier for the road'
-                        },
+                        _id: { type: 'string', description: 'Unique identifier for the road' },
+                        name: { type: 'string', description: 'Name of the road' },
+                        routeCode: { type: 'string', description: 'Code identifier for the road (ej. L1, L12)' },
                         typeRoad: {
                             type: 'string',
-                            enum: ['PRINCIPAL', 'SECUNDARIA', 'AUXILIAR'],
+                            enum: ['EXPRESS', 'RELEVOS', 'CENTRALES'],
                             description: 'Type of road'
                         },
                         status: {
                             type: 'string',
-                            enum: ['ACTIVO', 'INACTIVO'],
+                            enum: ['ACTIVE', 'INACTIVE', 'MAINTENANCE', 'CLOSED'],
                             description: 'Status of the road'
                         },
                         stations: {
                             type: 'array',
-                            items: {
-                                type: 'string'
-                            },
+                            items: { type: 'string' },
                             description: 'Array of station IDs'
                         },
-                        createdAt: {
-                            type: 'string',
-                            format: 'date-time',
-                            description: 'Creation timestamp'
-                        },
-                        updatedAt: {
-                            type: 'string',
-                            format: 'date-time',
-                            description: 'Last update timestamp'
-                        }
+                        createdAt: { type: 'string', format: 'date-time' },
+                        updatedAt: { type: 'string', format: 'date-time' }
                     }
                 },
                 Station: {
                     type: 'object',
                     properties: {
-                        _id: {
-                            type: 'string',
-                            description: 'Unique identifier for the station'
-                        },
-                        name: {
-                            type: 'string',
-                            description: 'Name of the station'
-                        },
-                        stationCode: {
-                            type: 'string',
-                            description: 'Code identifier for the station'
-                        },
+                        _id: { type: 'string', description: 'Unique identifier for the station' },
+                        name: { type: 'string', description: 'Name of the station' },
+                        stationCode: { type: 'string', description: 'Code identifier for the station (ej. EST-01)' },
                         typeStation: {
                             type: 'string',
-                            enum: ['TERMINAL', 'PARADA', 'INTERMEDIA'],
+                            enum: ['CENTRALES', 'CARRIL LATERAL', 'TRASBORDO', 'TERMINALES'],
                             description: 'Type of station'
+                        },
+                        status: {
+                            type: 'string',
+                            enum: ['ACTIVE', 'INACTIVE', 'MAINTENANCE', 'CLOSED'],
+                            description: 'Status of the station'
                         },
                         location: {
                             type: 'object',
                             properties: {
-                                latitude: {
-                                    type: 'number'
-                                },
-                                longitude: {
-                                    type: 'number'
-                                }
-                            },
-                            description: 'Geographic location'
+                                type: { type: 'string', example: 'Point' },
+                                coordinates: { type: 'array', items: { type: 'number' }, example: [-90.5132, 14.6407] }
+                            }
                         },
-                        status: {
-                            type: 'string',
-                            enum: ['ACTIVO', 'INACTIVO'],
-                            description: 'Status of the station'
-                        },
-                        createdAt: {
-                            type: 'string',
-                            format: 'date-time',
-                            description: 'Creation timestamp'
-                        },
-                        updatedAt: {
-                            type: 'string',
-                            format: 'date-time',
-                            description: 'Last update timestamp'
-                        }
+                        createdAt: { type: 'string', format: 'date-time' },
+                        updatedAt: { type: 'string', format: 'date-time' }
                     }
                 },
                 Alert: {
                     type: 'object',
                     properties: {
-                        _id: {
+                        _id: { type: 'string', description: 'Unique identifier for the alert' },
+                        title: { type: 'string', description: 'Title of the alert' },
+                        description: { type: 'string', description: 'Detailed description of the alert' },
+                        typeAlert: {
                             type: 'string',
-                            description: 'Unique identifier for the alert'
-                        },
-                        title: {
-                            type: 'string',
-                            description: 'Title of the alert'
-                        },
-                        description: {
-                            type: 'string',
-                            description: 'Detailed description of the alert'
-                        },
-                        type: {
-                            type: 'string',
-                            enum: ['CONGESTIÓN', 'ACCIDENTE', 'MANTENIMIENTO', 'OTRO'],
+                            enum: ['INCIDENT', 'MAINTENANCE', 'INFO'],
                             description: 'Type of alert'
                         },
                         status: {
                             type: 'string',
-                            enum: ['ACTIVA', 'RESUELTA'],
+                            enum: ['ACTIVE', 'RESOLVED'],
                             description: 'Status of the alert'
                         },
-                        severity: {
-                            type: 'string',
-                            enum: ['BAJA', 'MEDIA', 'ALTA'],
-                            description: 'Severity level of the alert'
-                        },
-                        location: {
-                            type: 'object',
-                            properties: {
-                                road: {
-                                    type: 'string'
-                                },
-                                station: {
-                                    type: 'string'
-                                }
-                            },
-                            description: 'Location of the alert'
-                        },
-                        createdAt: {
-                            type: 'string',
-                            format: 'date-time',
-                            description: 'Creation timestamp'
-                        },
-                        updatedAt: {
-                            type: 'string',
-                            format: 'date-time',
-                            description: 'Last update timestamp'
-                        }
+                        createdAt: { type: 'string', format: 'date-time' },
+                        updatedAt: { type: 'string', format: 'date-time' }
                     }
                 },
                 Error: {
                     type: 'object',
                     properties: {
-                        success: {
-                            type: 'boolean',
-                            example: false
-                        },
-                        message: {
-                            type: 'string',
-                            description: 'Error message'
-                        },
-                        error: {
-                            type: 'string',
-                            description: 'Error details'
-                        }
+                        success: { type: 'boolean', example: false },
+                        message: { type: 'string', description: 'Error message' },
+                        error: { type: 'string', description: 'Error details' }
                     }
                 }
             }
