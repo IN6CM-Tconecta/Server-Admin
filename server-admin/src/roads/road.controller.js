@@ -3,6 +3,7 @@
 import mongoose from 'mongoose';
 import Road from './road.model.js';
 import Station from '../stations/station.model.js'; 
+import Alert from '../alerts/alert.model.js'; // Importado para alertas automáticas
 
 const processStations = async (stationsArray) => {
     if (!stationsArray || !Array.isArray(stationsArray) || stationsArray.length === 0) return [];
@@ -141,6 +142,19 @@ export const createRoad = async (req, res) => {
         const road = new Road(roadData);
         await road.save();
 
+        // --- ALERTA AUTOMÁTICA ---
+        try {
+            await Alert.create({
+                title: 'Nueva Ruta Creada',
+                description: `La ruta ${road.name} (${road.routeCode}) ha sido agregada exitosamente al sistema.`,
+                typeAlert: 'INFO',
+                status: 'ACTIVE'
+            });
+        } catch (alertError) {
+            console.error('Error al crear alerta operativa:', alertError);
+        }
+        // -------------------------
+
         res.status(201).json({
             success: true,
             message: 'Ruta creada exitosamente',
@@ -199,6 +213,19 @@ export const updateRoad = async (req, res) => {
             });
         }
 
+        // --- ALERTA AUTOMÁTICA ---
+        try {
+            await Alert.create({
+                title: 'Ruta Actualizada',
+                description: `La ruta ${road.name} (${road.routeCode}) ha sido modificada.`,
+                typeAlert: 'INFO',
+                status: 'ACTIVE'
+            });
+        } catch (alertError) {
+            console.error('Error al crear alerta operativa:', alertError);
+        }
+        // -------------------------
+
         res.status(200).json({
             success: true,
             message: 'Ruta actualizada exitosamente',
@@ -218,8 +245,9 @@ export const changeRoadStatus = async (req, res) => {
     try {
         const { id } = req.params;
         const { status } = req.body; 
+        const statusUpper = status.toUpperCase();
 
-        if (!['ACTIVE', 'INACTIVE', 'MAINTENANCE', 'CLOSED'].includes(status.toUpperCase())) {
+        if (!['ACTIVE', 'INACTIVE', 'MAINTENANCE', 'CLOSED'].includes(statusUpper)) {
             return res.status(400).json({
                 success: false,
                 message: 'Estado inválido proporcionado'
@@ -233,7 +261,7 @@ export const changeRoadStatus = async (req, res) => {
 
         const road = await Road.findOneAndUpdate(
             query,
-            { status: status.toUpperCase() },
+            { status: statusUpper },
             { new: true }
         );
 
@@ -244,9 +272,32 @@ export const changeRoadStatus = async (req, res) => {
             });
         }
 
+        // --- ALERTA AUTOMÁTICA ---
+        try {
+            let alertType = 'INFO';
+            if (statusUpper === 'MAINTENANCE') alertType = 'MAINTENANCE';
+            if (statusUpper === 'CLOSED') alertType = 'INCIDENT';
+            
+            let statusTitle = 'Estado de Ruta Cambiado';
+            if (statusUpper === 'ACTIVE') statusTitle = 'Ruta Activada';
+            if (statusUpper === 'INACTIVE') statusTitle = 'Ruta Desactivada';
+            if (statusUpper === 'MAINTENANCE') statusTitle = 'Ruta en Mantenimiento';
+            if (statusUpper === 'CLOSED') statusTitle = 'Ruta Clausurada';
+
+            await Alert.create({
+                title: statusTitle,
+                description: `La ruta ${road.name} (${road.routeCode}) ha cambiado su estado a ${statusUpper}.`,
+                typeAlert: alertType,
+                status: 'ACTIVE'
+            });
+        } catch (alertError) {
+            console.error('Error al crear alerta operativa:', alertError);
+        }
+        // -------------------------
+
         res.status(200).json({
             success: true,
-            message: `El estado de la ruta cambió a ${status.toUpperCase()} exitosamente`,
+            message: `El estado de la ruta cambió a ${statusUpper} exitosamente`,
             data: road
         });
         

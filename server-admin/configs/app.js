@@ -16,6 +16,7 @@ import { dbConnection } from './db.js';
 import roadRoutes from '../src/roads/road.routes.js';
 import stationRoutes from '../src/stations/station.routes.js';
 import alertRoutes from '../src/alerts/alert.routes.js';
+import busRoutes from '../src/buses/bus.routes.js';
 
 const BASE_URL = '/TCONECTA/v1';
 
@@ -34,6 +35,7 @@ const routes = (app) => {
     app.use(`${BASE_URL}/roads`, roadRoutes);
     app.use(`${BASE_URL}/stations`, stationRoutes);
     app.use(`${BASE_URL}/alerts`, alertRoutes);
+    app.use(`${BASE_URL}/buses`, busRoutes);
     
     // Swagger Documentation
     app.use('/api-docs', swaggerUi.serve);

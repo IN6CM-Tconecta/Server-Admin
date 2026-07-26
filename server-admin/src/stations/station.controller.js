@@ -2,6 +2,7 @@
 
 import mongoose from "mongoose";
 import Station from "./station.model.js";
+import Alert from "../alerts/alert.model.js";
 
 
 // 1. Obtener TODAS las estaciones
@@ -219,6 +220,32 @@ export const changeStationStatus = async (req, res) => {
         success: false,
         message: "Estación no encontrada",
       });
+    }
+
+    // CREATE AUTOMATIC ALERT
+    let typeAlert = 'INFO';
+    let title = `Actualización de Estado: ${station.name}`;
+    let description = `La estación ${station.name} (${station.stationCode}) ha cambiado su estado a ${status.toUpperCase()}.`;
+
+    if (status.toUpperCase() === 'MAINTENANCE') {
+        typeAlert = 'MAINTENANCE';
+        title = `Mantenimiento en Estación: ${station.name}`;
+        description = `La estación ${station.name} (${station.stationCode}) se encuentra en mantenimiento temporal.`;
+    } else if (status.toUpperCase() === 'CLOSED' || status.toUpperCase() === 'INACTIVE') {
+        typeAlert = 'INCIDENT';
+        title = `Estación Inactiva/Cerrada: ${station.name}`;
+        description = `La estación ${station.name} (${station.stationCode}) ha cambiado su estado a ${status.toUpperCase()}.`;
+    }
+
+    try {
+        const autoAlert = new Alert({
+            title,
+            description,
+            typeAlert
+        });
+        await autoAlert.save();
+    } catch (alertError) {
+        console.error("Error al crear alerta automática:", alertError);
     }
 
     res.status(200).json({
