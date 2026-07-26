@@ -1,29 +1,29 @@
 import { query } from 'express-validator';
 import { checkValidators } from './check-validators.js';
 
-export const validatePagination =[
+export const validatePagination = [
     query('page')
-        .optional()
+        .optional({ checkFalsy: true })
         .isInt({ min: 1 })
         .withMessage('El parámetro "page" debe ser un número entero mayor a 0')
         .toInt(),
     query('limit')
-        .optional()
+        .optional({ checkFalsy: true })
         .isInt({ min: 1, max: 100 })
         .withMessage('El parámetro "limit" debe ser un número entero entre 1 y 100')
         .toInt(),
     checkValidators
 ];
 
-export const validateRoadFilters =[
+export const validateRoadFilters = [
     query('status')
-        .optional()
+        .optional({ checkFalsy: true })
         .isString()
         .toUpperCase()
         .isIn(['ACTIVE', 'INACTIVE', 'MAINTENANCE', 'CLOSED'])
         .withMessage('El filtro "status" debe ser ACTIVE, INACTIVE, MAINTENANCE o CLOSED'),
     query('typeRoad')
-        .optional()
+        .optional({ checkFalsy: true })
         .isString()
         .toUpperCase()
         .isIn(['EXPRESS', 'RELEVOS', 'CENTRALES'])
@@ -31,15 +31,15 @@ export const validateRoadFilters =[
     checkValidators
 ];
 
-export const validateStationFilters =[
+export const validateStationFilters = [
     query('status')
-        .optional()
+        .optional({ checkFalsy: true })
         .isString()
         .toUpperCase()
         .isIn(['ACTIVE', 'INACTIVE', 'MAINTENANCE', 'CLOSED'])
         .withMessage('El filtro "status" debe ser ACTIVE, INACTIVE, MAINTENANCE o CLOSED'),
     query('typeStation')
-        .optional()
+        .optional({ checkFalsy: true })
         .isString()
         .toUpperCase()
         .isIn(['CENTRALES', 'CARRIL LATERAL', 'TRASBORDO', 'TERMINALES'])
