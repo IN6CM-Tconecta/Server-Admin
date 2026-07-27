@@ -41,6 +41,11 @@ export const dbConnection = async () => {
       serverSelectionTimeoutMS: 5000,
       maxPoolSize: 10,
     });
+
+    if (process.env.AUTO_SEED === 'true') {
+      const { seedTransmetroData } = await import("../src/utils/auto-seeder.js");
+      await seedTransmetroData();
+    }
   } catch (error) {
     console.log(`Error al conectar la db:  ${error}`);
     process.exit(1);

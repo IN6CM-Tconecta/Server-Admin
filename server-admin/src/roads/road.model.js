@@ -24,6 +24,11 @@ const roadSchema = new mongoose.Schema(
             enum: ['EXPRESS', 'RELEVOS', 'CENTRALES'],
             default: 'CENTRALES'
         },
+        color: {
+            type: String,
+            required: true,
+            default: '#3388ff' // Azul genérico por defecto
+        },
         status: {
             type: String,
             required: true,
