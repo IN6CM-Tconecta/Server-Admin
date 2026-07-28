@@ -46,57 +46,59 @@ const routes = (app) => {
     }));
 }
 
+//Creación de la instancia de la aplicaccion
+const app = express();
+
+//CONFIGURACIONES DEL MIDDLEWARES Y RUTAS
+middlewares(app);
+routes(app);
+
+//Primera ruta (Health Check)
+/**
+ * @swagger
+ * /TRANSMETRO-CONECTA/v1/health:
+ *   get:
+ *     tags:
+ *       - Health Check
+ *     summary: Check server health status
+ *     description: Returns the current status of the API server
+ *     responses:
+ *       200:
+ *         description: Server is healthy
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: 'ok'
+ *                 service:
+ *                   type: string
+ *                   example: 'TRANSMETRO-CONECTA Admin'
+ *                 version:
+ *                   type: string
+ *                   example: '1.0.0'
+ */
+app.get(`${BASE_URL}/health`, (req, res) => {
+    res.status(200).json({
+        status: 'ok',
+        service: 'TRANSMETRO-CONECTA Admin',
+        version: '1.0.0'
+    });
+});
+
 //FUNCIÓN PARA INICIAR EL SERVIDOR
 const initServer = async () => {
-    //Creación de la instancia de la aplicaccion
-    const app = express();
     const PORT = process.env.PORT || 3001;
 
     try {
         //Conexión a Base de Datos (Esperamos a que conecte)
         await dbConnection();
 
-        //CONFIGURACIONES DEL MIDDLEWARES Y RUTAS
-        middlewares(app);
-        routes(app);
         app.listen(PORT, () => {
             console.log(`Servidor corriendo en el puerto ${PORT}`);
             console.log(`Base URL: http://localhost:${PORT}${BASE_URL}`);
-        });
-
-        //Primera ruta (Health Check)
-        /**
-         * @swagger
-         * /TRANSMETRO-CONECTA/v1/health:
-         *   get:
-         *     tags:
-         *       - Health Check
-         *     summary: Check server health status
-         *     description: Returns the current status of the API server
-         *     responses:
-         *       200:
-         *         description: Server is healthy
-         *         content:
-         *           application/json:
-         *             schema:
-         *               type: object
-         *               properties:
-         *                 status:
-         *                   type: string
-         *                   example: 'ok'
-         *                 service:
-         *                   type: string
-         *                   example: 'TRANSMETRO-CONECTA Admin'
-         *                 version:
-         *                   type: string
-         *                   example: '1.0.0'
-         */
-        app.get(`${BASE_URL}/health`, (req, res) => {
-            res.status(200).json({
-                status: 'ok',
-                service: 'TRANSMETRO-CONECTA Admin',
-                version: '1.0.0'
-            });
         });
 
     } catch (error) {
@@ -104,4 +106,4 @@ const initServer = async () => {
     }
 }
 
-export { initServer };
+export { app, initServer };

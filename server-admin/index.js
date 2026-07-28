@@ -14,4 +14,14 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 console.log(`Iniciando servidor de Tconecta...`);
-initServer();
+
+import { app } from './configs/app.js';
+import { dbConnection } from './configs/db.js';
+
+if (process.env.VERCEL) {
+    dbConnection();
+} else {
+    initServer();
+}
+
+export default app;
