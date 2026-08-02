@@ -1,98 +1,101 @@
 # Tconecta - Server Admin
 
-Microservicio principal que actúa como panel administrativo para Tconecta. Desarrollado con Node.js y Express, gestiona la administración de estaciones, rutas, alertas operativas y orquesta las peticiones principales del sistema de transporte.
+## Description
 
-## Configuración de Entorno (.env)
+This repository contains the main microservice that acts as the administrative panel for Tconecta. Developed with Node.js and Express, it manages the administration of stations, routes (roads), buses, and operational alerts, and orchestrates the main requests of the transportation system.
 
-Crea un archivo `.env` en la raíz de la carpeta `server-admin` con las siguientes variables requeridas para su ejecución aislada o contenedorizada:
+## Tech Stack
 
+Based on the project configuration, the technology stack includes:
+- **Node.js** & **Express**: Backend web framework
+- **MongoDB** with **Mongoose**: NoSQL Database and ODM
+- **Argon2**: Password hashing
+- **JSON Web Token (JWT)**: Authentication and authorization
+- **Cloudinary** & **Multer**: Image/file uploads and cloud storage
+- **Express Validator**: Data validation
+- **Swagger UI Express** & **Swagger JS Doc**: API documentation
+- **Helmet**, **CORS**, **Morgan**: Security, cross-origin resource sharing, and HTTP request logging
+- **Axios**: HTTP client
+- **Pnpm**: Package manager
+
+## Folder Structure
+
+```text
+Server-Admin/
+├── Docker General/       # Docker ecosystem configurations
+├── Postman/              # Postman collections for testing endpoints
+├── docs/                 # Additional project documentation
+└── server-admin/         # Main Node.js application directory
+    ├── configs/          # Application, database, and Swagger configurations
+    ├── middlewares/      # Express middlewares (auth, validators, etc.)
+    ├── src/              # Application source code (Domain modules)
+    │   ├── alerts/       # Alerts controller, model, and routes
+    │   ├── buses/        # Buses controller, model, and routes
+    │   ├── data/         # Data layer or static data files
+    │   ├── roads/        # Roads controller, model, and routes
+    │   ├── stations/     # Stations controller, model, and routes
+    │   └── utils/        # Utility functions, helpers, seeders
+    ├── index.js          # Application entry point
+    ├── package.json      # Dependencies and scripts
+    ├── vercel.json       # Vercel deployment configuration
+    └── Dockerfile        # Docker container definition
+```
+
+## API Endpoints
+
+The API is structured with the base URL: `/TCONECTA/v1`
+
+### Health Check
+- `GET /health` - Check the server health status
+
+### Roads (Rutas)
+- `GET /roads` - List roads with pagination and filters
+- `GET /roads/all` - List all roads (no pagination)
+- `GET /roads/:id` - Get a road by its ID
+- `POST /roads` - Create a new road (Requires Admin)
+- `PUT /roads/:id` - Update an existing road (Requires Admin)
+- `PUT /roads/:id/status` - Change the status of a road (Requires Admin)
+
+### Stations (Estaciones)
+- `GET /stations` - List stations with pagination and filters
+- `GET /stations/all` - List all stations (no pagination)
+- `GET /stations/:id` - Get a station by its ID
+- `POST /stations` - Create a new station (Requires Admin)
+- `PUT /stations/:id` - Update an existing station (Requires Admin)
+- `PUT /stations/:id/status` - Change the status of a station (Requires Admin)
+
+### Alerts (Alertas)
+- `GET /alerts` - Get all active alerts
+- `POST /alerts` - Create a new alert (Requires Admin)
+- `PUT /alerts/:id/status` - Resolve or update an alert's status (Requires Admin)
+
+### Buses (Buses)
+- `GET /buses` - List buses
+- `GET /buses/:id` - Get a bus by its ID
+- `POST /buses` - Create a new bus (Requires Admin)
+- `PUT /buses/:id` - Update an existing bus (Requires Admin)
+- `PATCH /buses/:id/status` - Change the status of a bus (Requires Admin)
+
+## Setup and Installation
+
+### Environment Configuration
+Create a `.env` file in the `server-admin` directory with the following variables:
 ```env
 PORT=3001
 MONGODB_URI=mongodb://localhost:27017/TransmetroAdminDb
-JWT_SECRET=A_SUPER_SECRET_KEY_FOR_TRANSMETRO_CONECTA_12345
+JWT_SECRET=your_jwt_secret_key
 ```
 
-## Ejecución del Proyecto
-
-La forma recomendada de ejecutar el servicio es utilizando **Docker Compose** junto con todo el ecosistema de microservicios.
-
-Desde la **raíz del proyecto** (donde se encuentra el archivo `docker-compose.yml`), ejecuta:
-
+### Running the Project
+The recommended way to run the service is using **Docker Compose**. From the root of the project where `docker-compose.yml` is located:
 ```bash
 docker compose up -d --build
 ```
+This will start the server container, and the service will be available at: `http://localhost:3001`
 
-Esto iniciará el contenedor del servidor y el servicio quedará disponible en:
-
-```
-http://localhost:3001
-```
-
----
-
-## Documentación Swagger/OpenAPI
-
-Se ha implementado documentación automática e interactiva de todos los endpoints mediante **Swagger UI**.
-
-### Acceso a la Documentación
-
-Una vez que el servidor esté en ejecución, accede a:
-
-```
-http://localhost:3001/api-docs
-```
-
-### Características de Swagger
-
-- ✅ Documentación automática de todos los endpoints
-- ✅ Interfaz interactiva para probar endpoints en tiempo real
-- ✅ Especificación OpenAPI 3.0 completa
-- ✅ Soporte para autenticación JWT Bearer Token
-- ✅ Esquemas de datos documentados
-- ✅ Ejemplos de parámetros y respuestas
-
-### Endpoints Disponibles en Swagger
-
-- **Health Check**: Verificar estado del servidor
-- **Roads**: Gestión de rutas (listar, crear, actualizar, cambiar estado)
-- **Stations**: Gestión de estaciones (listar, crear, actualizar, cambiar estado)
-- **Alerts**: Gestión de alertas (listar, crear, resolver)
-
+### API Documentation (Swagger)
+The project includes interactive API documentation generated by Swagger. Once the server is running, you can access it at:
+`http://localhost:3001/api-docs`
 
 ---
-
-Las pruebas del API se realizan mediante una colección de Postman.
-
-### Pasos
-
-1. Importa la colección `Postman-Transmetro.json` a Postman
-2. Ve a **Variables de la Colección**.
-3. Verifica que la base de las rutas esté apuntando a:
-
-```
-http://localhost:3001/TCONECTA/v1
-```
-
-4. Ejecuta el endpoint:
-
-```
-Autenticación > Iniciar sesión
-```
-
-5. Si ejecutas una petición de login, puedes configurar el script de **Tests** para que guarde automáticamente el **JWT Token** en la variable:
-
-```
-{{token}}
-```
-
-6. Las demás peticiones protegidas utilizarán automáticamente ese token gracias a la configuración **Bearer Token**.
-
----
-
-## Funcionalidades principales
-
-* Autenticación y validación mediante **JWT** y Argon2.
-* Administración y registro de **Estaciones** del sistema.
-* Gestión de **Rutas** (líneas del Transmetro).
-* Control de **Alertas** de servicio (incidentes, mantenimientos).
-* Centralización de seguridad con Helmet, validaciones por Express-Validator e integración con Cloudinary.
+*For more details on testing, please check the Postman collections provided in the `Postman` folder.*
